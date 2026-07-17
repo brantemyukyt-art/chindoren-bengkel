@@ -1,15 +1,46 @@
 # bengkel.py
-from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash
+from flask import Blueprint, render_template, request, jsonify, redirect, url_for, flash, Response
 from flask_login import login_required, current_user
 from sqlalchemy import func, case
 from datetime import date, timedelta, datetime
+from io import StringIO
+import csv
 
-from models import db, Antrean, User, Layanan, Kendaraan, RiwayatServis, Merk, TipeKendaraan, Estimator, Testimoni
+from models import db, Antrean, User, Layanan, Kendaraan, RiwayatServis, Merk, TipeKendaraan, Estimator
 from decorators import admin_required
 from wa_helper import kirim_whatsapp
 from forms import AdminPelangganForm, AdminKendaraanForm, EntriServisForm
 
 bengkel_bp = Blueprint('bengkel', __name__)
+
+class QueueReporter:
+    def __init__(self, queue_records):
+        self._queue_records = queue_records
+
+    def _format_row(self, antrean):
+        nama = antrean.nama_guest or getattr(antrean, 'user', None) and antrean.user.nama or ''
+        layanan = antrean.layanan.nama_layanan if antrean.layanan else ''
+        tanggal = antrean.tanggal.strftime('%Y-%m-%d') if antrean.tanggal else ''
+        return [
+            antrean.nomor_antrean,
+            nama,
+            antrean.plat_nomor,
+            layanan,
+            antrean.status,
+            tanggal,
+        ]
+
+    def _format_csv_line(self, row):
+        buffer = StringIO()
+        writer = csv.writer(buffer)
+        writer.writerow(row)
+        return buffer.getvalue()
+
+    def generate_csv_data(self):
+        headers = ['No Antrean', 'Nama', 'Plat', 'Layanan', 'Status', 'Tanggal']
+        yield self._format_csv_line(headers)
+        for antrean in self._queue_records:
+            yield self._format_csv_line(self._format_row(antrean))
 
 # ==========================================
 # RUTE PUBLIK & PELANGGAN
@@ -240,21 +271,10 @@ def estimasi_page():
     return render_template('estimator.html')
 
 
-@bengkel_bp.route('/tentang')
-def tentang_kami():
-    return render_template('tentang.html')
-
-
 @bengkel_bp.route('/layanan')
 def layanan_page():
     layanan = Layanan.query.order_by(Layanan.nama_layanan).all()
     return render_template('layanan.html', layanan=layanan)
-
-
-@bengkel_bp.route('/testimoni')
-def testimoni_page():
-    testimoni = Testimoni.query.order_by(Testimoni.created_at.desc()).all()
-    return render_template('testimoni.html', testimoni=testimoni)
 
 
 @bengkel_bp.route('/admin/dashboard')
@@ -296,6 +316,23 @@ def admin_antrean():
     antrean_saat_ini = Antrean.query.filter_by(tanggal=hari_ini, status='Sedang Dikerjakan').first()
     nomor_saat_ini = antrean_saat_ini.nomor_antrean if antrean_saat_ini else "Belum Ada"
     return render_template('admin_antrean.html', antrean_list=antrean_list, antrean_saat_ini=nomor_saat_ini)
+
+
+@bengkel_bp.route('/admin/export/csv')
+@admin_required
+def export_antrean_csv():
+    hari_ini = date.today()
+    antrean_list = Antrean.query.filter_by(tanggal=hari_ini).order_by(Antrean.id).all()
+    reporter = QueueReporter(antrean_list)
+    csv_data = reporter.generate_csv_data()
+
+    return Response(
+        csv_data,
+        mimetype='text/csv',
+        headers={
+            'Content-Disposition': 'attachment; filename=laporan_antrean.csv'
+        }
+    )
 
 
 @bengkel_bp.route('/admin/quick-add', methods=['GET', 'POST'])
@@ -358,10 +395,11 @@ def admin_riwayat_servis():
 @admin_required
 def admin_pelanggan():
     pelanggan = User.query.filter_by(role='pelanggan').all()
-    return render_template('admin_pelanggan.html', pelanggan=pelanggan)
+    form = AdminPelangganForm()
+    return render_template('admin_pelanggan.html', pelanggan=pelanggan, form=form)
 
 
-@bengkel_bp.route('/admin/pelanggan/tambah', methods=['GET', 'POST'])
+@bengkel_bp.route('/admin/pelanggan/tambah', methods=['POST'])
 @admin_required
 def tambah_pelanggan():
     form = AdminPelangganForm()
@@ -384,8 +422,8 @@ def tambah_pelanggan():
         except Exception:
             db.session.rollback()
             flash('Gagal menambahkan pelanggan. Silakan coba lagi.', 'danger')
-            return render_template('admin_pelanggan_form.html', form=form, judul='Tambah Pelanggan')
-    return render_template('admin_pelanggan_form.html', form=form, judul='Tambah Pelanggan')
+    pelanggan = User.query.filter_by(role='pelanggan').all()
+    return render_template('admin_pelanggan.html', pelanggan=pelanggan, form=form)
 
 
 @bengkel_bp.route('/admin/pelanggan/<int:id>/edit', methods=['GET', 'POST'])

@@ -11,7 +11,13 @@
           <h1 class="mt-2 text-2xl font-semibold text-white">Manajemen antrean hari ini</h1>
           <p class="mt-2 text-sm text-slate-400">Pantau antrean langsung dari satu tabel padat dan lakukan aksi cepat untuk setiap pelanggan.</p>
         </div>
-        <a href="{{ url_for('bengkel.entri_servis') }}" class="rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-500">Entri servis baru</a>
+        <div class="flex flex-wrap items-center gap-2">
+          <a href="{{ url_for('bengkel.export_antrean_csv') }}" class="inline-flex items-center rounded-lg border border-emerald-500 bg-transparent px-3 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/10 hover:text-emerald-100">
+            <i class="bi bi-file-earmark-spreadsheet mr-2"></i>
+            Ekspor CSV
+          </a>
+          <a href="{{ url_for('bengkel.entri_servis') }}" class="rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-500">Entri servis baru</a>
+        </div>
       </div>
     </div>
 
