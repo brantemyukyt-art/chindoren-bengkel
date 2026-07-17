@@ -1,0 +1,44 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Quick Add Walk-in{% endblock %}
+
+{% block content %}
+  <div class="max-w-2xl rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="mb-5">
+      <div class="text-xs font-semibold uppercase tracking-[0.35em] text-teal-400">Quick Add</div>
+      <h1 class="mt-2 text-2xl font-semibold text-white">Walk-in cepat</h1>
+      <p class="mt-2 text-sm text-slate-400">Form singkat untuk menambahkan pelanggan offline langsung ke antrean hari ini.</p>
+    </div>
+
+    <form method="POST" class="space-y-4">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="nama">Customer Name</label>
+        <input id="nama" name="nama" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="no_hp">Phone</label>
+        <input id="no_hp" name="no_hp" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="plat_nomor">Plate Number</label>
+        <input id="plat_nomor" name="plat_nomor" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+      </div>
+
+      <div>
+        <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="layanan_id">Service</label>
+        <select id="layanan_id" name="layanan_id" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500">
+          <option value="">-- Pilih layanan --</option>
+          {% for layanan_item in layanan %}
+            <option value="{{ layanan_item.id }}">{{ layanan_item.nama_layanan }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <button type="submit" class="w-full rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-500">Tambahkan ke antrean</button>
+    </form>
+  </div>
+{% endblock %}

@@ -1,0 +1,61 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Masuk - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="mx-auto flex max-w-6xl flex-col gap-6 overflow-hidden rounded-[36px] border border-stone-200 bg-white/90 shadow-ambient backdrop-blur lg:flex-row">
+    <div class="flex-1 bg-gradient-to-br from-neutral-950 via-neutral-900 to-teal-950 p-8 text-white lg:p-10">
+      <p class="text-sm font-semibold uppercase tracking-[0.3em] text-teal-400">Akses pelanggan</p>
+      <h1 class="mt-3 text-3xl font-semibold sm:text-4xl">Masuk untuk memantau servis dan antrean.</h1>
+      <p class="mt-4 text-sm leading-7 text-stone-300">Nikmati pengalaman booking, tracking, dan buku servis digital dalam satu dashboard yang modern.</p>
+      <div class="mt-8 space-y-3 text-sm text-stone-300">
+        <div class="rounded-2xl border border-white/10 bg-white/10 p-3">✓ Pantau antrean secara real time</div>
+        <div class="rounded-2xl border border-white/10 bg-white/10 p-3">✓ Simpan riwayat servis dengan rapi</div>
+        <div class="rounded-2xl border border-white/10 bg-white/10 p-3">✓ Dapatkan estimasi biaya lebih cepat</div>
+      </div>
+    </div>
+    <div class="flex-1 p-8 lg:p-10">
+      <h2 class="text-2xl font-semibold text-neutral-950">Masuk ke akun Anda</h2>
+      <form method="POST" action="" class="mt-6 space-y-4">
+        {{ form.csrf_token }}
+        <div>
+          {{ form.email.label(class_="mb-2 block text-sm font-semibold text-stone-700") }}
+          {{ form.email(class_="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white") }}
+          {% if form.email.errors %}
+            {% for error in form.email.errors %}
+              <p class="mt-1 text-sm text-rose-600">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div>
+          {{ form.password.label(class_="mb-2 block text-sm font-semibold text-stone-700") }}
+          {{ form.password(class_="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white") }}
+          {% if form.password.errors %}
+            {% for error in form.password.errors %}
+              <p class="mt-1 text-sm text-rose-600">{{ error }}</p>
+            {% endfor %}
+          {% endif %}
+        </div>
+        {{ form.submit(class_="w-full rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5") }}
+      </form>
+
+      <div class="mt-4 space-y-3">
+        <a href="{{ url_for('auth.login_google') }}" class="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:border-teal-500 hover:text-teal-600">
+          <span>G</span>
+          <span>Masuk dengan Google</span>
+        </a>
+        <a href="{{ url_for('auth.login_whatsapp_otp') }}" class="flex items-center justify-center gap-2 rounded-2xl border border-stone-200 px-4 py-3 text-sm font-semibold text-stone-700 transition hover:border-teal-500 hover:text-teal-600">
+          <span>📱</span>
+          <span>Masuk dengan WhatsApp OTP</span>
+        </a>
+      </div>
+
+      <div class="mt-4 flex items-center justify-between text-sm">
+        <a href="{{ url_for('auth.forgot_password') }}" class="font-semibold text-teal-600 hover:text-teal-700">Lupa password?</a>
+        <p class="text-stone-600">
+          Belum punya akun? <a href="{{ url_for('auth.register') }}" class="font-semibold text-teal-600 hover:text-teal-700">Daftar sekarang</a>
+        </p>
+      </div>
+    </div>
+  </div>
+{% endblock %}

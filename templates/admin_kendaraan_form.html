@@ -1,0 +1,42 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}{{ judul }} - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="overflow-hidden rounded-[32px] border border-stone-200 bg-white/90 shadow-ambient backdrop-blur">
+      <div class="bg-gradient-to-r from-neutral-950 via-neutral-900 to-teal-950 px-8 py-8 text-white">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-teal-400">Admin management</p>
+        <h1 class="mt-3 text-3xl font-semibold">{{ judul }}</h1>
+      </div>
+      <div class="p-8">
+        <form method="POST" class="space-y-6">
+          {{ form.csrf_token }}
+          <div>
+            {{ form.user_id.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.user_id(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.plat_nomor.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.plat_nomor(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.merk.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.merk(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.tipe.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.tipe(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.tahun.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.tahun(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.submit(class_='w-full rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5') }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

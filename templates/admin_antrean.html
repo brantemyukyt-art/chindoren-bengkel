@@ -1,0 +1,147 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Manajemen Antrean - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="space-y-5">
+    <div class="rounded-2xl border border-slate-800 bg-slate-900 p-5">
+      <div class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div>
+          <div class="text-xs font-semibold uppercase tracking-[0.35em] text-teal-400">Queue board</div>
+          <h1 class="mt-2 text-2xl font-semibold text-white">Manajemen antrean hari ini</h1>
+          <p class="mt-2 text-sm text-slate-400">Pantau antrean langsung dari satu tabel padat dan lakukan aksi cepat untuk setiap pelanggan.</p>
+        </div>
+        <a href="{{ url_for('bengkel.entri_servis') }}" class="rounded-lg bg-teal-600 px-3 py-2 text-sm font-semibold text-white hover:bg-teal-500">Entri servis baru</a>
+      </div>
+    </div>
+
+    <div class="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900">
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-slate-300">
+          <thead class="border-b border-slate-800 bg-slate-950/70 text-left text-xs uppercase tracking-[0.25em] text-slate-500">
+            <tr>
+              <th class="px-3 py-3">Jam</th>
+              <th class="px-3 py-3">Nama</th>
+              <th class="px-3 py-3">Plat</th>
+              <th class="px-3 py-3">Layanan</th>
+              <th class="px-3 py-3">Status</th>
+              <th class="px-3 py-3 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for antrean in antrean_list %}
+              <tr class="border-b border-slate-800/70 align-top">
+                <td class="px-3 py-2 whitespace-nowrap">{{ antrean.jam or '-' }}</td>
+                <td class="px-3 py-2">
+                  <div class="font-medium text-white">{{ antrean.nama_guest or antrean.pelanggan.nama }}</div>
+                  <div class="text-xs text-slate-500">{{ antrean.pelanggan.no_hp if antrean.pelanggan else '-' }}</div>
+                </td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ antrean.plat_nomor }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">{{ antrean.layanan.nama_layanan }}</td>
+                <td class="px-3 py-2 whitespace-nowrap">
+                  <span class="rounded-full px-2 py-1 text-xs font-semibold {% if antrean.status == 'Menunggu' %}bg-amber-950/60 text-amber-300{% elif antrean.status == 'Sedang Dikerjakan' %}bg-sky-950/60 text-sky-300{% elif antrean.status == 'Selesai' %}bg-emerald-950/60 text-emerald-300{% else %}bg-rose-950/60 text-rose-300{% endif %}">
+                    {{ antrean.status }}
+                  </span>
+                </td>
+                <td class="px-3 py-2 whitespace-nowrap text-right">
+                  <div class="flex justify-end gap-2">
+                    <button type="button" onclick="updateStatus({{ antrean.id }}, 'Sedang Dikerjakan')" class="rounded-md bg-emerald-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-emerald-500">Proses</button>
+                    <button type="button" onclick="openCompleteModal({{ antrean.id }})" class="rounded-md bg-sky-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-sky-500">Selesaikan</button>
+                    <button type="button" onclick="updateStatus({{ antrean.id }}, 'Batal')" class="rounded-md bg-rose-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-rose-500">Batal/No-Show</button>
+                  </div>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="6" class="px-3 py-6 text-center text-slate-500">Belum ada antrean untuk hari ini.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="completeModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/70 px-4">
+    <div class="w-full max-w-md rounded-2xl border border-slate-800 bg-slate-900 p-5 shadow-2xl">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-semibold text-white">Selesaikan antrean</h2>
+        <button type="button" onclick="closeCompleteModal()" class="text-sm text-slate-400">Tutup</button>
+      </div>
+      <form id="completeForm" class="mt-4 space-y-3">
+        <input type="hidden" id="completeAntreanId" name="antrean_id" value="">
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="mekanik">Mekanik</label>
+          <input id="mekanik" name="mekanik" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="kilometer">KM</label>
+          <input id="kilometer" name="kilometer" type="number" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="parts">Sparepart / bagian</label>
+          <input id="parts" name="parts" class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+        </div>
+        <div>
+          <label class="mb-1 block text-xs font-semibold uppercase tracking-[0.25em] text-slate-500" for="cost">Biaya</label>
+          <input id="cost" name="cost" type="number" required class="w-full rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white outline-none focus:border-teal-500" />
+        </div>
+        <button type="submit" class="w-full rounded-lg bg-sky-600 px-3 py-2 text-sm font-semibold text-white hover:bg-sky-500">Simpan selesai</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content || '';
+
+    async function updateStatus(id, status) {
+      const response = await fetch(`/admin/antrean/${id}/status`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({ status })
+      });
+      const data = await response.json();
+      if (response.ok) {
+        window.location.reload();
+      } else {
+        alert(data.error || 'Gagal memperbarui status antrean.');
+      }
+    }
+
+    function openCompleteModal(id) {
+      document.getElementById('completeAntreanId').value = id;
+      document.getElementById('completeModal').classList.remove('hidden');
+      document.getElementById('completeModal').classList.add('flex');
+      document.getElementById('mekanik').focus();
+    }
+
+    function closeCompleteModal() {
+      document.getElementById('completeModal').classList.add('hidden');
+      document.getElementById('completeModal').classList.remove('flex');
+      document.getElementById('completeForm').reset();
+    }
+
+    document.getElementById('completeForm')?.addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const id = document.getElementById('completeAntreanId').value;
+      const formData = new FormData(this);
+      const response = await fetch(`/admin/antrean/${id}/selesai`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': csrfToken
+        },
+        body: formData
+      });
+      const data = await response.json();
+      if (response.ok) {
+        closeCompleteModal();
+        window.location.reload();
+      } else {
+        alert(data.error || 'Gagal menyimpan data selesai.');
+      }
+    });
+  </script>
+{% endblock %}

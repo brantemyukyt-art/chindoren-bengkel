@@ -1,0 +1,79 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Dashboard - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-6xl space-y-4 px-2 sm:px-0">
+    <div class="rounded-[28px] border border-stone-200 bg-gradient-to-r from-neutral-950 via-neutral-900 to-teal-950 p-5 text-white shadow-xl shadow-neutral-900/20 sm:p-6">
+      <p class="text-[11px] font-semibold uppercase tracking-[0.3em] text-teal-400">Dashboard pelanggan</p>
+      <h1 class="mt-2 text-2xl font-semibold sm:text-3xl">Selamat datang, {{ user.nama }}</h1>
+      <p class="mt-2 text-sm leading-6 text-stone-300">Kelola servis, pantau kendaraan, dan akses fitur penting dengan cepat.</p>
+    </div>
+
+    <section class="rounded-[24px] border border-stone-200 bg-white p-4 shadow-sm sm:p-5">
+      <div class="flex items-center justify-between">
+        <div>
+          <h2 class="text-base font-semibold text-neutral-950">Kendaraan terdaftar</h2>
+          <p class="text-sm text-stone-500">Swipe untuk melihat mobil Anda</p>
+        </div>
+        <a href="{{ url_for('bengkel.booking') }}" class="text-sm font-semibold text-teal-600">Booking</a>
+      </div>
+      <div class="mt-4 flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory">
+        {% if user.kendaraan %}
+          {% for kendaraan in user.kendaraan %}
+            <div class="min-w-[220px] flex-1 snap-start rounded-2xl border border-stone-200 bg-gradient-to-br from-stone-50 to-teal-50 p-4 shadow-sm">
+              <div class="flex items-center justify-between">
+                <span class="rounded-full bg-teal-100 px-2.5 py-1 text-[11px] font-semibold text-teal-700">{{ kendaraan.merk }}</span>
+                <span class="text-xs text-stone-500">{{ kendaraan.tahun }}</span>
+              </div>
+              <h3 class="mt-3 text-base font-semibold text-neutral-950">{{ kendaraan.tipe }}</h3>
+              <p class="mt-1 text-sm text-stone-600">{{ kendaraan.plat_nomor }}</p>
+              <div class="mt-4 rounded-xl bg-white/80 px-3 py-2 text-sm text-stone-600">
+                Servis terakhir: <span class="font-semibold text-stone-800">Belum ada</span>
+              </div>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="min-w-full rounded-2xl border border-dashed border-stone-300 bg-stone-50 p-4 text-sm text-stone-600">
+            Belum ada kendaraan terdaftar. Silakan tambahkan kendaraan untuk mulai melihat riwayat servis.
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <a href="{{ url_for('bengkel.booking') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-xl text-teal-600">🗓️</div>
+        <p class="mt-3 text-sm font-semibold text-neutral-950">Booking</p>
+        <p class="mt-1 text-xs text-stone-500">Buat janji servis</p>
+      </a>
+      <a href="{{ url_for('bengkel.layanan_page') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-50 text-xl text-amber-600">🔧</div>
+        <p class="mt-3 text-sm font-semibold text-neutral-950">Services</p>
+        <p class="mt-1 text-xs text-stone-500">Lihat paket layanan</p>
+      </a>
+      <a href="{{ url_for('bengkel.buku_servis') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-50 text-xl text-sky-600">📜</div>
+        <p class="mt-3 text-sm font-semibold text-neutral-950">History</p>
+        <p class="mt-1 text-xs text-stone-500">Riwayat servis Anda</p>
+      </a>
+      <a href="{{ url_for('bengkel.estimasi_page') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-50 text-xl text-rose-600">💰</div>
+        <p class="mt-3 text-sm font-semibold text-neutral-950">Estimasi</p>
+        <p class="mt-1 text-xs text-stone-500">Cek perkiraan biaya</p>
+      </a>
+      <a href="{{ url_for('bengkel.settings') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-violet-50 text-xl text-violet-600">⚙️</div>
+        <p class="mt-3 text-sm font-semibold text-neutral-950">Settings</p>
+        <p class="mt-1 text-xs text-stone-500">Preferensi notifikasi</p>
+      </a>
+      {% if current_user.role == 'admin' %}
+        <a href="{{ url_for('bengkel.admin_pelanggan') }}" class="rounded-2xl border border-stone-200 bg-white p-4 text-left shadow-sm transition hover:-translate-y-0.5 hover:border-teal-500 hover:shadow-md">
+          <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-xl text-emerald-600">👥</div>
+          <p class="mt-3 text-sm font-semibold text-neutral-950">Users</p>
+          <p class="mt-1 text-xs text-stone-500">Kelola pelanggan</p>
+        </a>
+      {% endif %}
+    </section>
+  </div>
+{% endblock %}

@@ -1,0 +1,59 @@
+﻿{% extends 'admin_base.html' %}
+
+{% block title %}Entri Servis - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="overflow-hidden rounded-[32px] border border-stone-200 bg-white/90 shadow-ambient backdrop-blur">
+      <div class="bg-gradient-to-r from-neutral-950 via-neutral-900 to-teal-950 px-8 py-8 text-white">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-teal-400">Admin workflow</p>
+        <h1 class="mt-3 text-3xl font-semibold">Entri Servis Baru</h1>
+        <p class="mt-3 text-sm leading-7 text-stone-300">Catat hasil pemeriksaan, tindakan, sparepart, dan total biaya dalam satu form yang rapi dan cepat.</p>
+      </div>
+      <div class="p-8">
+        <form method="POST" class="space-y-4">
+          {{ form.csrf_token }}
+          <div>
+            {{ form.kendaraan_id.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.kendaraan_id(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.mekanik.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.mekanik(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.kilometer.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.kilometer(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.tindakan.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.tindakan(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white', rows='4') }}
+          </div>
+          <div>
+            {{ form.sparepart.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.sparepart(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white', rows='3') }}
+          </div>
+          <div>
+            {{ form.replaced_parts.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.replaced_parts(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white', rows='3', placeholder='Contoh: Oli mesin\nFilter oli') }}
+          </div>
+          <div>
+            {{ form.cost_breakdown.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.cost_breakdown(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white', rows='4', placeholder='Contoh: Jasa servis: 150000\nOli mesin: 90000') }}
+          </div>
+          <div>
+            {{ form.next_service_recommendation.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.next_service_recommendation(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white', rows='3') }}
+          </div>
+          <div>
+            {{ form.total_biaya.label(class_='mb-2 block text-sm font-semibold text-stone-700') }}
+            {{ form.total_biaya(class_='w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white') }}
+          </div>
+          <div>
+            {{ form.submit(class_='w-full rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5') }}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endblock %}

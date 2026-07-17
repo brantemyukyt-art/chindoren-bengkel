@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Chindoren Bengkel{% endblock %}</title>
+  <meta name="description" content="Platform booking servis dan buku servis digital untuk bengkel modern Chindoren." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root { color-scheme: light; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .shadow-ambient { box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12); }
+    .glass { backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+    .card-hover { transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease; }
+    .card-hover:hover { transform: translateY(-5px); box-shadow: 0 22px 60px rgba(15, 23, 42, 0.14); border-color: rgba(20, 184, 166, 0.38); }
+    .animate-float { animation: floaty 5.5s ease-in-out infinite; }
+    .animate-glow { background-size: 200% 100%; animation: shimmer 3.2s linear infinite; }
+    @keyframes floaty { 0%,100% { transform: translateY(0px);} 50% { transform: translateY(-6px);} }
+    @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+    @media (max-width: 767px) {
+      header.sticky.top-0.z-50 { display: none !important; }
+      main.mx-auto.max-w-7xl { padding-bottom: 6rem !important; }
+      .mobile-bottom-nav { display: flex !important; }
+    }
+    @media (min-width: 768px) {
+      .mobile-bottom-nav { display: none !important; }
+    }
+  </style>
+</head>
+<body class="min-h-full bg-[radial-gradient(circle_at_top_left,_rgba(20,184,166,0.16),_transparent_30%),linear-gradient(135deg,_#f8fafc_0%,_#f5f5f4_55%,_#fef3c7_100%)] text-stone-800 selection:bg-teal-500/30">
+  <header class="sticky top-0 z-50 border-b border-white/10 bg-neutral-950/90 glass">
+    <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 md:flex-row md:items-center md:justify-between lg:px-8">
+      <a href="{{ url_for('index') }}" class="flex items-center gap-3 text-xl font-semibold text-white">
+        <img src="{{ url_for('static', filename='logo.png') }}" alt="Logo Chindoren Bengkel" class="h-11 w-11 rounded-full object-cover ring-2 ring-teal-400/40" />
+        <div>
+          <p class="text-base font-semibold">Chindoren Bengkel</p>
+          <p class="text-sm text-stone-400">Digital service experience</p>
+        </div>
+      </a>
+      <nav class="flex flex-wrap items-center gap-2 text-sm">
+        {% set nav_items = [
+          ('index', 'Beranda', url_for('index')),
+          ('bengkel.tentang_kami', 'Tentang Kami', url_for('bengkel.tentang_kami')),
+          ('bengkel.layanan_page', 'Layanan', url_for('bengkel.layanan_page')),
+          ('bengkel.testimoni_page', 'Testimoni', url_for('bengkel.testimoni_page')),
+          ('bengkel.estimasi_page', 'Estimasi', url_for('bengkel.estimasi_page')),
+          ('bengkel.booking', 'Booking', url_for('bengkel.booking'))
+        ] %}
+        {% for endpoint, label, href in nav_items %}
+          <a href="{{ href }}" class="rounded-full px-3 py-2 transition hover:bg-white/10 hover:text-teal-400 {% if request.endpoint == endpoint %}bg-white/10 text-teal-400 shadow-sm ring-1 ring-teal-400/30{% else %}text-stone-300{% endif %}">{% if endpoint == 'bengkel.booking' %}<span class="font-semibold">{{ label }}</span>{% else %}{{ label }}{% endif %}</a>
+        {% endfor %}
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('bengkel.dashboard') }}" class="rounded-full px-3 py-2 transition hover:bg-white/10 hover:text-teal-400 {% if request.endpoint == 'bengkel.dashboard' %}bg-white/10 text-teal-400 shadow-sm ring-1 ring-teal-400/30{% else %}text-stone-300{% endif %}">Dashboard</a>
+          {% if current_user.role == 'admin' %}
+            <div class="relative inline-block group">
+              <button class="rounded-full px-3 py-2 text-stone-300 transition hover:bg-white/10 hover:text-teal-400">Admin ▾</button>
+              <div class="absolute left-0 top-full z-50 mt-2 hidden min-w-[220px] rounded-2xl border border-stone-200 bg-white p-2 shadow-xl group-hover:block group-focus-within:block">
+                <a href="{{ url_for('bengkel.admin_pelanggan') }}" class="block rounded-xl px-3 py-2 text-sm text-stone-700 transition hover:bg-stone-100">Manajemen Pelanggan</a>
+                <a href="{{ url_for('bengkel.admin_kendaraan') }}" class="block rounded-xl px-3 py-2 text-sm text-stone-700 transition hover:bg-stone-100">Manajemen Kendaraan</a>
+                <a href="{{ url_for('bengkel.admin_antrean') }}" class="block rounded-xl px-3 py-2 text-sm text-stone-700 transition hover:bg-stone-100">Manajemen Antrean</a>
+                <a href="{{ url_for('bengkel.entri_servis') }}" class="block rounded-xl px-3 py-2 text-sm text-stone-700 transition hover:bg-stone-100">Entri Servis</a>
+              </div>
+            </div>
+          {% endif %}
+          <a href="{{ url_for('auth.logout') }}" class="rounded-full px-3 py-2 text-stone-300 transition hover:bg-white/10 hover:text-teal-400">Keluar</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}" class="rounded-full px-3 py-2 text-stone-300 transition hover:bg-white/10 hover:text-teal-400">Masuk</a>
+          <a href="{{ url_for('auth.register') }}" class="rounded-full px-3 py-2 text-stone-300 transition hover:bg-white/10 hover:text-teal-400">Daftar</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-6 space-y-3">
+          {% for category, message in messages %}
+            <div class="rounded-2xl border px-4 py-3 text-sm {% if category == 'success' %}border-emerald-200 bg-emerald-50 text-emerald-800{% elif category == 'danger' %}border-rose-200 bg-rose-50 text-rose-800{% else %}border-amber-200 bg-amber-50 text-amber-800{% endif %}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+
+  <nav class="mobile-bottom-nav fixed bottom-0 left-0 right-0 z-[60] flex items-center justify-around border-t border-stone-200 bg-white/95 px-2 py-2 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur">
+    <a href="{{ url_for('index') }}" class="flex flex-1 flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium {% if request.endpoint == 'index' %}text-teal-600{% else %}text-stone-500{% endif %}">
+      <span class="text-lg">⌂</span>
+      <span>Home</span>
+    </a>
+    <a href="{{ url_for('bengkel.buku_servis') }}" class="flex flex-1 flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium {% if request.endpoint == 'bengkel.buku_servis' %}text-teal-600{% else %}text-stone-500{% endif %}">
+      <span class="text-lg">⚡</span>
+      <span>Activity</span>
+    </a>
+    <a href="{{ url_for('bengkel.booking') }}" class="flex flex-1 flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium {% if request.endpoint == 'bengkel.booking' %}text-teal-600{% else %}text-stone-500{% endif %}">
+      <span class="text-lg">💬</span>
+      <span>Chat</span>
+    </a>
+    {% if current_user.is_authenticated %}
+      <a href="{{ url_for('bengkel.dashboard') }}" class="flex flex-1 flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium {% if request.endpoint == 'bengkel.dashboard' %}text-teal-600{% else %}text-stone-500{% endif %}">
+        <span class="text-lg">👤</span>
+        <span>Profile</span>
+      </a>
+    {% else %}
+      <a href="{{ url_for('auth.login') }}" class="flex flex-1 flex-col items-center rounded-2xl px-2 py-2 text-[11px] font-medium text-stone-500">
+        <span class="text-lg">👤</span>
+        <span>Profile</span>
+      </a>
+    {% endif %}
+  </nav>
+
+  <footer class="mt-10 border-t border-stone-200/80 bg-neutral-900/95 py-10 text-stone-300">
+    <div class="mx-auto flex max-w-7xl flex-col gap-3 px-4 text-sm md:flex-row md:items-center md:justify-between lg:px-8">
+      <p>© 2026 Chindoren Bengkel. Semua hak cipta dilindungi.</p>
+      <p>Servis cepat, transparan, dan modern untuk setiap kendaraan Anda.</p>
+    </div>
+  </footer>
+</body>
+</html>

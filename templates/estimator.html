@@ -1,0 +1,188 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Estimasi Harga - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <div class="mx-auto max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+    <div class="overflow-hidden rounded-[36px] border border-stone-200 bg-white/90 shadow-ambient backdrop-blur">
+      <div class="bg-gradient-to-r from-neutral-950 via-neutral-900 to-teal-950 px-8 py-8 text-white">
+        <p class="text-sm font-semibold uppercase tracking-[0.3em] text-teal-400">Estimator biaya</p>
+        <h1 class="mt-3 text-3xl font-semibold">Kalkulator estimasi servis yang cepat dan transparan</h1>
+        <p class="mt-3 text-sm leading-7 text-stone-300">Pilih merk, tipe, dan keluhan kendaraan Anda untuk melihat rentang harga yang mungkin dikenakan.</p>
+      </div>
+      <div class="grid gap-8 p-8 lg:grid-cols-[1.05fr_0.95fr]">
+        <div>
+          <div class="mb-5">
+            <label class="mb-2 block text-sm font-semibold text-stone-700" for="merk">Merk kendaraan</label>
+            <select id="merk" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white">
+              <option value="">-- Pilih merk --</option>
+            </select>
+          </div>
+          <div class="mb-5">
+            <label class="mb-2 block text-sm font-semibold text-stone-700" for="tipe">Tipe kendaraan</label>
+            <select id="tipe" class="w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white" disabled>
+              <option value="">-- Pilih tipe --</option>
+            </select>
+          </div>
+          <div class="mb-6">
+            <label class="mb-2 block text-sm font-semibold text-stone-700" for="keluhan">Gejala / keluhan</label>
+            <div id="keluhan-chip-group" class="mb-3 flex flex-wrap gap-2"></div>
+            <div class="rounded-2xl border border-stone-200 bg-stone-50 p-3">
+              <div id="symptom-pills" class="flex flex-wrap gap-2"></div>
+            </div>
+            <textarea id="keluhan" rows="4" class="mt-3 w-full rounded-2xl border border-stone-200 bg-stone-50 px-4 py-3 text-sm outline-none transition focus:border-teal-500 focus:bg-white" placeholder="Contoh: suara mesin kasar, rem berisik, mesin susah hidup"></textarea>
+            <p class="mt-2 text-xs text-stone-500">Pilih beberapa gejala yang paling dekat atau tambahkan catatan singkat Anda.</p>
+          </div>
+          <div class="alert alert-warning rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 shadow-sm" role="alert">
+            <strong>Estimasi kasar.</strong> Harga final ditentukan setelah pengecekan mekanik di lokasi.
+          </div>
+          <div class="flex flex-wrap items-center gap-3 mt-4">
+            <button id="cek" class="rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5">Cek estimasi biaya</button>
+            <div id="hasil-estimasi" class="hidden rounded-2xl border border-teal-200 bg-teal-50 px-4 py-3 text-sm font-semibold text-teal-800"></div>
+          </div>
+          <p class="mt-4 text-sm text-stone-500">*Harga hanya estimasi dan dapat berubah setelah mekanik memeriksa kondisi kendaraan Anda.</p>
+        </div>
+        <div class="rounded-[28px] border border-stone-200 bg-stone-50 p-6">
+          <p class="text-sm font-semibold uppercase tracking-[0.3em] text-stone-500">Kenapa fitur ini nyaman</p>
+          <div class="mt-4 space-y-3 text-sm text-stone-600">
+            <div class="rounded-2xl bg-white p-4">✔️ Pilihan merk dan tipe otomatis memudahkan pencarian.</div>
+            <div class="rounded-2xl bg-white p-4">✔️ Hasil muncul secara instan tanpa perlu menunggu lama.</div>
+            <div class="rounded-2xl bg-white p-4">✔️ Cocok untuk pelanggan yang ingin tahu prioritas biaya sebelum datang.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+  const symptomFallbacks = [
+    'Servis rutin',
+    'Rem berisik',
+    'Mesin susah hidup',
+    'Suara mesin kasar',
+    'Oli bocor',
+    'Baterai lemah'
+  ]
+  let symptomPresets = []
+
+  function renderSymptomTags(){
+    const container = document.getElementById('symptom-pills')
+    const input = document.getElementById('keluhan')
+    container.innerHTML = ''
+
+    symptomPresets.forEach((symptom) => {
+      const wrapper = document.createElement('label')
+      wrapper.className = 'inline-flex cursor-pointer items-center gap-2 rounded-full border border-teal-200 bg-white px-3 py-1.5 text-sm text-teal-700 shadow-sm transition hover:border-teal-500 hover:bg-teal-50'
+
+      const checkbox = document.createElement('input')
+      checkbox.type = 'checkbox'
+      checkbox.value = symptom
+      checkbox.className = 'sr-only'
+      checkbox.addEventListener('change', () => {
+        const selected = Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((item) => item.value)
+        const freeText = input.value.trim()
+        input.value = selected.join(', ')
+        if (freeText && selected.length === 0) {
+          input.value = freeText
+        } else if (freeText && selected.length > 0) {
+          input.value = `${selected.join(', ')} | ${freeText}`
+        }
+        wrapper.classList.toggle('bg-teal-600', checkbox.checked)
+        wrapper.classList.toggle('text-white', checkbox.checked)
+        wrapper.classList.toggle('border-teal-600', checkbox.checked)
+      })
+
+      const span = document.createElement('span')
+      span.textContent = symptom
+      wrapper.appendChild(checkbox)
+      wrapper.appendChild(span)
+      container.appendChild(wrapper)
+    })
+  }
+
+  async function fetchMerks(){
+    const r = await fetch('/api/estimator/merks')
+    const data = await r.json()
+    const sel = document.getElementById('merk')
+    data.forEach(m => {
+      const o = document.createElement('option')
+      o.value = m.id; o.text = m.nama
+      sel.appendChild(o)
+    })
+  }
+  async function fetchTipes(merk_id){
+    const r = await fetch('/api/estimator/tipes?merk_id='+merk_id)
+    const data = await r.json()
+    const sel = document.getElementById('tipe')
+    sel.innerHTML = '<option value="">-- Pilih tipe --</option>'
+    data.forEach(t => {
+      const o = document.createElement('option')
+      o.value = t.id; o.text = t.nama
+      sel.appendChild(o)
+    })
+    sel.disabled = false
+  }
+
+  async function fetchKeluhan(merk_id = null, tipe_id = null){
+    const params = new URLSearchParams()
+    if(merk_id) params.set('merk_id', merk_id)
+    if(tipe_id) params.set('tipe_id', tipe_id)
+    const r = await fetch('/api/estimator/keluhan?' + params.toString())
+    if(r.ok){
+      symptomPresets = await r.json()
+    }
+    if(!symptomPresets.length){
+      symptomPresets = [...symptomFallbacks]
+    }
+    renderSymptomTags()
+  }
+
+  async function initEstimatorPage(){
+    await fetchMerks()
+    await fetchKeluhan()
+    document.getElementById('merk').addEventListener('change', async function(){
+      const merk_id = this.value
+      if(merk_id) {
+        await fetchTipes(merk_id)
+        await fetchKeluhan(merk_id)
+      } else {
+        document.getElementById('tipe').innerHTML = '<option value="">-- Pilih tipe --</option>'
+        document.getElementById('tipe').disabled = true
+        symptomPresets = [...symptomFallbacks]
+        renderSymptomTags()
+      }
+    })
+    document.getElementById('tipe').addEventListener('change', async function(){
+      const merk_id = document.getElementById('merk').value
+      const tipe_id = this.value
+      if(merk_id && tipe_id) {
+        await fetchKeluhan(merk_id, tipe_id)
+      }
+    })
+  }
+
+  initEstimatorPage()
+  document.getElementById('cek').addEventListener('click', async function(){
+    const merk_id = document.getElementById('merk').value
+    const tipe_id = document.getElementById('tipe').value
+    const keluhan = document.getElementById('keluhan').value.trim()
+    const out = document.getElementById('hasil-estimasi')
+    if(!merk_id||!tipe_id||!keluhan){
+      out.innerText = 'Silakan pilih merk, tipe, dan jelaskan gejala Anda.'
+      out.classList.remove('hidden')
+      return
+    }
+
+    const match = symptomPresets.find((symptom) => keluhan.toLowerCase().includes(symptom.toLowerCase()))
+    const lookupValue = match || keluhan
+    const r = await fetch(`/api/estimator/price?merk_id=${merk_id}&tipe_id=${tipe_id}&keluhan=${encodeURIComponent(lookupValue)}`)
+    if(r.status===200){
+      const j = await r.json()
+      out.innerText = `Estimasi biaya: Rp ${j.harga_min.toLocaleString('id-ID')} - Rp ${j.harga_max.toLocaleString('id-ID')}`
+    } else {
+      const e = await r.json()
+      out.innerText = e.error || 'Data tidak ditemukan.'
+    }
+    out.classList.remove('hidden')
+  })
+  </script>
+{% endblock %}

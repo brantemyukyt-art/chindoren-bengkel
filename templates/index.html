@@ -1,0 +1,73 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}Beranda - Chindoren Bengkel{% endblock %}
+
+{% block content %}
+  <section class="space-y-8">
+    <div class="overflow-hidden rounded-[36px] border border-stone-200/80 bg-white/80 shadow-ambient backdrop-blur">
+      <div class="grid gap-8 px-6 py-8 md:grid-cols-[1.05fr_0.95fr] md:px-10 md:py-12 lg:px-14">
+        <div class="flex flex-col justify-center">
+          <div class="inline-flex w-fit items-center gap-2 rounded-full border border-teal-200 bg-teal-50 px-3 py-1 text-sm font-medium text-teal-700">
+            <span class="h-2.5 w-2.5 rounded-full bg-teal-600"></span>
+            Solusi servis modern
+          </div>
+          <h1 class="mt-5 text-4xl font-black leading-tight text-neutral-950 sm:text-5xl lg:text-6xl">Bengkel digital yang membuat setiap servis terasa premium.</h1>
+          <p class="mt-5 max-w-2xl text-lg leading-8 text-stone-600">Pantau antrean, cek estimasi biaya, dan nikmati buku servis digital dari satu tempat yang bersih, cepat, dan penuh kontrol.</p>
+          <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+            <a href="{{ url_for('bengkel.booking') }}" class="rounded-2xl bg-gradient-to-r from-teal-600 to-emerald-500 px-6 py-3 text-center font-semibold text-white shadow-lg shadow-teal-500/20 transition hover:-translate-y-0.5 hover:shadow-xl">Booking servis sekarang</a>
+            <a href="{{ url_for('bengkel.estimasi_page') }}" class="rounded-2xl border border-stone-200 bg-white px-6 py-3 text-center font-semibold text-stone-700 transition hover:border-teal-600 hover:text-teal-600">Cek estimasi biaya</a>
+          </div>
+          <div class="mt-6 flex flex-wrap gap-3 text-sm text-stone-600">
+            <span class="rounded-full border border-stone-200 bg-stone-50 px-3 py-1">⚡ Antrean real-time</span>
+            <span class="rounded-full border border-stone-200 bg-stone-50 px-3 py-1">🛠️ Riwayat servis digital</span>
+            <span class="rounded-full border border-stone-200 bg-stone-50 px-3 py-1">📍 Tracking transparan</span>
+          </div>
+        </div>
+
+        <div class="rounded-[30px] bg-gradient-to-br from-neutral-950 via-neutral-900 to-teal-950 p-6 text-white shadow-2xl shadow-neutral-900/20">
+          <div class="rounded-[24px] border border-white/10 bg-white/10 p-5 backdrop-blur">
+            <div class="flex items-center justify-between">
+              <p class="text-sm font-semibold uppercase tracking-[0.3em] text-teal-400">Status hari ini</p>
+              <span class="rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-300">Live</span>
+            </div>
+            <div class="mt-5 space-y-3">
+              <div class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3">
+                <span>Antrean saat ini</span>
+                <span class="font-semibold text-teal-300">B-011</span>
+              </div>
+              <div class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3">
+                <span>Estimasi tunggu</span>
+                <span class="font-semibold text-teal-300">25 menit</span>
+              </div>
+              <div class="flex items-center justify-between rounded-2xl bg-white/10 px-4 py-3">
+                <span>Status servis</span>
+                <span class="font-semibold text-emerald-300">Aktif</span>
+              </div>
+            </div>
+            <div class="mt-6 rounded-2xl border border-teal-400/20 bg-teal-500/10 p-4">
+              <p class="text-sm text-stone-300">“Layanan cepat, antrean jelas, dan semua data servis tersimpan rapi.”</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-3">
+      <div class="rounded-[28px] border border-stone-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <h2 class="text-xl font-semibold text-neutral-950">Layanan premium</h2>
+        <p class="mt-3 text-sm leading-7 text-stone-600">Servis rutin, cuci premium, dan turun mesin dengan mekanik berpengalaman.</p>
+        <a href="{{ url_for('bengkel.layanan_page') }}" class="mt-5 inline-flex text-sm font-semibold text-teal-600 hover:text-teal-700">Pelajari layanan kami →</a>
+      </div>
+      <div class="rounded-[28px] border border-stone-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <h2 class="text-xl font-semibold text-neutral-950">Kalkulator estimasi</h2>
+        <p class="mt-3 text-sm leading-7 text-stone-600">Dapatkan rentang harga real time berdasarkan merk, tipe, dan jenis masalah kendaraan.</p>
+        <a href="{{ url_for('bengkel.estimasi_page') }}" class="mt-5 inline-flex text-sm font-semibold text-teal-600 hover:text-teal-700">Cek estimasi sekarang →</a>
+      </div>
+      <div class="rounded-[28px] border border-stone-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+        <h2 class="text-xl font-semibold text-neutral-950">Testimoni pelanggan</h2>
+        <p class="mt-3 text-sm leading-7 text-stone-600">Baca pengalaman pengguna yang puas karena sistem booking dan tracking-nya sangat praktis.</p>
+        <a href="{{ url_for('bengkel.testimoni_page') }}" class="mt-5 inline-flex text-sm font-semibold text-teal-600 hover:text-teal-700">Lihat testimoni →</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}

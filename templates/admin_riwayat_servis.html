@@ -1,0 +1,43 @@
+{% extends 'admin_base.html' %}
+
+{% block title %}Riwayat Servis Admin{% endblock %}
+
+{% block content %}
+  <div class="rounded-2xl border border-slate-800 bg-slate-900 p-6">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-sm font-semibold uppercase tracking-[0.35em] text-teal-400">Riwayat Servis</div>
+        <h1 class="mt-2 text-2xl font-semibold text-white">Daftar servis yang sudah dicatat</h1>
+      </div>
+    </div>
+
+    <div class="mt-6 overflow-x-auto">
+      <table class="min-w-full text-sm text-slate-300">
+        <thead class="border-b border-slate-800 text-left text-slate-500">
+          <tr>
+            <th class="py-3 pr-4">Tanggal</th>
+            <th class="py-3 pr-4">Kendaraan</th>
+            <th class="py-3 pr-4">Mekanik</th>
+            <th class="py-3 pr-4">Tindakan</th>
+            <th class="py-3 pr-4">Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in riwayat_list %}
+            <tr class="border-b border-slate-800/80">
+              <td class="py-3 pr-4">{{ item.tanggal_servis }}</td>
+              <td class="py-3 pr-4">{{ item.kendaraan.plat_nomor }} - {{ item.kendaraan.merk }} {{ item.kendaraan.tipe }}</td>
+              <td class="py-3 pr-4">{{ item.mekanik }}</td>
+              <td class="py-3 pr-4">{{ item.tindakan }}</td>
+              <td class="py-3 pr-4">Rp {{ "{:,.0f}".format(item.total_biaya) }}</td>
+            </tr>
+          {% else %}
+            <tr>
+              <td colspan="5" class="py-4 text-center text-slate-500">Belum ada riwayat servis.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}
